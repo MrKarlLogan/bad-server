@@ -172,7 +172,18 @@ userSchema.statics.findUserByCredentials = async function findByCredentials(
     const user = await this.findOne({ email })
         .select('+password')
         .orFail(() => new UnauthorizedError('Неправильные почта или пароль'))
-    const passwdMatch = await bcrypt.compare(password, user.password)
+
+    let passwdMatch = false
+    if (user.password) {
+        passwdMatch = await bcrypt.compare(password, user.password)
+        if (!passwdMatch) {
+            const md5Password = crypto
+                .createHash('md5')
+                .update(password)
+                .digest('hex')
+            passwdMatch = md5Password === user.password
+        }
+    }
     if (!passwdMatch) {
         return Promise.reject(
             new UnauthorizedError('Неправильные почта или пароль')

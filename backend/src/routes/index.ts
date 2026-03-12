@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import NotFoundError from '../errors/not-found-error'
-import { csrfProtection } from '../middlewares/csrf' // Добавить импорт
-
+import { csrfProtection } from '../middlewares/csrf'
 import auth from '../middlewares/auth'
 import authRouter from './auth'
 import customerRouter from './customers'

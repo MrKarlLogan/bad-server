@@ -7,16 +7,17 @@ import mongoose from 'mongoose'
 import path from 'path'
 import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
-import rateLimitMiddleware from './middlewares/rateLimitMiddleware'
 import { serveStatic } from './middlewares/serverStatic'
 import routes from './routes'
 import { generateCsrfToken } from './middlewares/csrf'
+import rateLimitMiddleware from './middlewares/rateLimitMiddleware'
 
 const { PORT = 3000, _ORIGIN_ALLOW = 'http://localhost:5173' } = process.env
 
 const app = express()
 
 app.use(cookieParser())
+
 app.use(
     cors({
         origin: true,
@@ -33,6 +34,7 @@ app.use(json({ limit: '50kb' }))
 const bootstrap = async () => {
     try {
         await mongoose.connect(DB_ADDRESS)
+
         if (process.env.RATE_LIMITED === 'true') {
             app.use(rateLimitMiddleware)
         }

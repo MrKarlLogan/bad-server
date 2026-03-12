@@ -8,6 +8,27 @@ import UnauthorizedError from '../errors/unauthorized-error'
 import UserModel, { Role } from '../models/user'
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
+    const publicPaths = [
+        '/api/auth/csrf-token',
+        '/auth/csrf-token',
+        '/api/auth/login',
+        '/auth/login',
+        '/api/auth/register',
+        '/auth/register',
+        '/api/products',
+        '/products',
+        '/api/products/',
+        '/products/',
+    ]
+
+    const isPublicPath = publicPaths.some(
+        (path) => req.path.startsWith(path) || req.path === path
+    )
+
+    if (isPublicPath) {
+        return next()
+    }
+
     let payload: JwtPayload | null = null
     const authHeader = req.header('Authorization')
     if (!authHeader?.startsWith('Bearer ')) {
